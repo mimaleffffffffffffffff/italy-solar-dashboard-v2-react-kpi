@@ -57,6 +57,10 @@
 
   <div id="chartCard">
     <div class="cardTitle">Top 5 Regions (Selected Season)</div>
+
+    <!-- NEW: KPI row rendered by React -->
+    <div id="kpiRoot"></div>
+
     <div class="cardHint" id="chartHint"></div>
     <canvas id="top5Chart" height="160"></canvas>
   </div>
@@ -66,6 +70,14 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- NEW: React (UMD) -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+
+  <!-- NEW: KPI widget -->
+  <script src="./kpi-widget.js"></script>
+
   <script src="./main.js"></script>
 </body>
 </html>
