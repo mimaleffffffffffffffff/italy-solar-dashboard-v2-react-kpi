@@ -35,6 +35,9 @@ let selectedRegion = ""; // "" means All
 let allRegions = [];
 let currentSeason = "spring";
 
+// NEW: keep the latest rendered features for KPI updates
+let currentFeatures = [];
+
 // ===== DOM refs =====
 const seasonSelect = document.getElementById("seasonSelect");
 const chartHint = document.getElementById("chartHint");
@@ -154,6 +157,17 @@ function addLegend(breaksGwh) {
   legendControl.addTo(map);
 }
 
+// ===== KPI (React) =====
+function updateShareKpi() {
+  if (typeof window.renderShareKpi !== "function") return;
+
+  window.renderShareKpi({
+    season: currentSeason,
+    selectedRegion,
+    features: currentFeatures
+  });
+}
+
 // ===== Chart (Top 5) =====
 function updateTop5Chart(features, season) {
   const canvas = document.getElementById("top5Chart");
@@ -230,6 +244,7 @@ function renderComboList(filterText) {
     comboLabel.textContent = "All regions";
     closeCombo();
     zoomToRegion("");
+    updateShareKpi(); // NEW
   });
   comboList.appendChild(allItem);
 
@@ -242,6 +257,7 @@ function renderComboList(filterText) {
       comboLabel.textContent = r;
       closeCombo();
       zoomToRegion(r);
+      updateShareKpi(); // NEW
     });
     comboList.appendChild(item);
   });
@@ -279,6 +295,7 @@ async function renderSeason(season) {
   console.log("Rows fetched:", rows.length);
 
   const features = rows.map(toFeature).filter(Boolean);
+  currentFeatures = features; // NEW (keep in memory for KPI)
 
   const valuesGwh = features.map(f => Number(f.properties.value_gwh)).filter(Number.isFinite);
 
@@ -287,6 +304,7 @@ async function renderSeason(season) {
     geoLayer = null;
     regionLayerIndex.clear();
     removeLegend();
+    updateShareKpi(); // NEW (will show "Select a region")
     return;
   }
 
@@ -324,12 +342,16 @@ async function renderSeason(season) {
       layer.on("click", () => {
         selectedRegion = p.region;
         comboLabel.textContent = p.region;
+        updateShareKpi(); // NEW
       });
     }
   }).addTo(map);
 
   addLegend(breaksGwh);
   updateTop5Chart(features, season);
+
+  // NEW: update KPI after rendering season
+  updateShareKpi();
 
   if (selectedRegion && regionLayerIndex.has(selectedRegion)) {
     zoomToRegion(selectedRegion);
@@ -340,6 +362,10 @@ async function renderSeason(season) {
 
 // ===== UI events =====
 seasonSelect.addEventListener("change", () => {
+  // optional: reset selection on season change (keeps UI consistent)
+  selectedRegion = "";
+  comboLabel.textContent = "All regions";
+
   renderSeason(seasonSelect.value).catch(console.error);
 });
 
