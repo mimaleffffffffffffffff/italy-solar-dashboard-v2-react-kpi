@@ -183,3 +183,28 @@ select{
   padding: 6px 10px;
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
 }
+/* KPI row (React widget) */
+.kpiRow{
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 6px 0 2px 0;
+  border-top: 1px dashed #eee;
+  margin-top: 6px;
+}
+
+.kpiLabel{
+  font-size: 12px;
+  color: #666;
+}
+
+.kpiValue{
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.kpiMeta{
+  font-size: 11px;
+  color: #777;
+  margin-left: 6px;
+}
